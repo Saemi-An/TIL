@@ -1,5 +1,6 @@
 import sqlite3
 from pprint import pprint
+import datetime
 
 def connect_db():
     conn = sqlite3.connect('plyy_v4.db')
@@ -20,6 +21,7 @@ def fetch_plyy_card_data():
             PLYY.gen_date as plyy_gen_date,
             GENRE.name as g_name,
             CURATOR.name as c_name,
+            CURATOR.id as c_id,
             COUNT(SONG.p_id) as total_songs,
             SUM(TRACK.rtime) as total_rtime
         FROM PLYY
@@ -54,9 +56,14 @@ def fetch_plyy_card_data():
 def fetch_plyy_card_tags():
     conn, cur = connect_db()
     cur.execute('''
-        SELECT PLYY.id as plyy_id, TAG.name as t_name from PLYY
-            JOIN P_TAG ON PLYY.id = P_TAG.p_id
-            JOIN TAG ON P_TAG.t_id = TAG.id
+        SELECT 
+            PLYY.id as plyy_id,
+            TAG.name as t_name,
+			CURATOR.id as c_id
+        FROM PLYY
+        JOIN P_TAG ON PLYY.id = P_TAG.p_id
+        JOIN TAG ON P_TAG.t_id = TAG.id
+		JOIN CURATOR ON PLYY.c_id = CURATOR.id
     ''')
     raw_data = cur.fetchall()
     plyy_tags = []
@@ -93,7 +100,7 @@ def fetch_all_tags():
 
     return tag_list
 
-# 밀리초 변환 함수
+# 밀리초 변환 함수 - 00시간 00분
 def cal_rtime(ms):
     minute_time = round(ms / 60000)
     if minute_time >= 60:
@@ -103,6 +110,12 @@ def cal_rtime(ms):
     else:
         minute_time = minute_time
         return f"{minute_time}분"
+    
+def cal_rtime_to_minutes(ms):
+    result = str(datetime.timedelta(milliseconds=ms))
+    result = result.split('.')[0][2:]
+    
+    return result
     
 def fetch_curator_cards():
     conn, cur = connect_db()
@@ -164,7 +177,7 @@ def fetch_plyy_detail_1(id=int):
             PLYY.gen_date,
             PLYY.cmt,
             CURATOR.name as c_name,
-            COUNT(SONG.p_id) as total_songs,
+            CURATOR.id as c_id,
             SUM(TRACK.rtime) as total_rtime
         FROM PLYY
         JOIN CURATOR ON PLYY.c_id = CURATOR.id
@@ -178,6 +191,9 @@ def fetch_plyy_detail_1(id=int):
     for row in raw_data:
         result.append(dict(row))
     conn.close()
+
+    # total_rtime 밀리초 변환
+    result[0]['total_rtime'] = cal_rtime(result[0]['total_rtime'])
 
     return result
 
@@ -224,11 +240,32 @@ def fetch_plyy_detail_3(id=int):
         result.append(dict(row))
     conn.close()
 
+    for row in result:
+        row['rtime'] = cal_rtime_to_minutes(row['rtime'])
+
     return result
 
+# 큐레이터상세 - 큐레이터 정보
+def fetch_curator_detail(c_id=int):
+    conn, cur = connect_db()
+    cur.execute('''
+        SELECT
+            CURATOR.name, CURATOR.img, CURATOR.intro,
+            SUM(PLYY.c_id) as plyy_count,
+            SUM(C_LIKE.c_id) as c_likes
+        FROM CURATOR
+        LEFT JOIN PLYY ON CURATOR.id = PLYY.c_id
+        LEFT JOIN C_LIKE ON CURATOR.id = C_LIKE.c_id
+        WHERE CURATOR.id = ?
+    ''', (c_id, ))
+    raw_data = cur.fetchall()
+    data = []
+    for row in raw_data:
+        data.append(dict(row))
+    conn.close()
+
+    return data
+
 if __name__ == '__main__':
-    # pass
-
-    data = fetch_plyy_detail_2(11)
+    data = fetch_curator_detail(1)
     pprint(data)
-
