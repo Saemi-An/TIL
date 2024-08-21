@@ -198,6 +198,6 @@ def curator_detail_plyy_cards(c_id=int):
 
     return result_list
 
-# if __name__ == '__main__':
-#     pass
+if __name__ == '__main__':
+    pass
 

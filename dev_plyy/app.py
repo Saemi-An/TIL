@@ -70,5 +70,5 @@ def api_curator_detail_plyy_cards(c_id):
     return jsonify(c_detail_curator_cards)
 
 
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.0', port=5050)
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5050)

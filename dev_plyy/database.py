@@ -286,5 +286,5 @@ def fetch_curator_detail(c_id=int):
 
     return data
 
-# if __name__ == '__main__':
-#     pass
+if __name__ == '__main__':
+    pass
