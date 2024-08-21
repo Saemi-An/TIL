@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify
 from api import *
+from database import *
 
 app = Flask(__name__)
 
@@ -44,6 +45,13 @@ def api_main_curator_cards():
 @app.route('/api_plyy_detail/<id>')
 def api_plyy_detail(id):
     plyy = plyy_detail(id)
+    
+    return jsonify(plyy)
+
+# API 플리 상세 - 플리 좋아요 갯수
+@app.route('/api_plyy_detail_likes/<id>')
+def api_plyy_detail_likes(id):
+    plyy = fetch_plyy_detail_likes(id)
     
     return jsonify(plyy)
 

@@ -71,12 +71,19 @@
             <!-- 큐레이터상세 플로팅 바 -->
             <div class="fixed-floating">
                 <div class="floating-curator">
-                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기"></button></div>
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" onclick="floatingBack()"></button></div>
                     <div class="like-group">
                         <button class="btn__float__like" aria-label="큐레이터 좋아요 수"></button>
                         <span class="fs12 curatorLikes">98</span>
                     </div>
-                    <div><button class="btn__float__share--black" aria-label="큐레이터 공유하기"></button></div>
+                    <div><button class="btn__float__share--black" aria-label="큐레이터 공유하기" onclick="copyToClipBoard()"></button></div>
+                </div>
+            </div>
+            <!-- 토스트메세지 -->
+            <div class="toast" id="toastMsg">
+                <div class="toast__msg">
+                    <div><button class="btn__checked"></button></div>
+                    <span class="fs12">링크가 복사 되었습니다.</span>
                 </div>
             </div>
         </div>
@@ -159,8 +166,33 @@
                 })
             }).catch(error => console.error('데이터를 처리하는 과정에서 오류가 발생하였습니다.', error));
         };
+        
+        // 공유버튼 클릭시 클리보드 복사
+        function copyToClipBoard() {
+            // 복사할 URL 가져오기
+            let curatorDetaillUrl = window.location.href;
 
-        // 
+            // HTMLInputElement.select()를 사용하기 위한 더미인풋박스 생성
+            let dummyInput = document.createElement('input');
+            document.body.appendChild(dummyInput);
+            dummyInput.value = curatorDetaillUrl;
+            dummyInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyInput);
+
+            // 토스트메세지 보이기
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.classList.add('active');
+            setTimeout(() => {
+                toastMsg.classList.remove('active');
+            }, 1500);
+        }
+
+        // 플로팅 - 뒤로가기 버튼
+        function floatingBack() {
+            window.history.back();
+        }
+         
         window.onload = function() {
             fetchCuratorDetail();
             fetchCuratorDetailCards();

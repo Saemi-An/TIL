@@ -180,9 +180,9 @@ def fetch_plyy_detail_1(id=int):
             CURATOR.id as c_id,
             SUM(TRACK.rtime) as total_rtime
         FROM PLYY
-        JOIN CURATOR ON PLYY.c_id = CURATOR.id
-        JOIN SONG ON PLYY.id = SONG.p_id
-        JOIN TRACK ON SONG.tk_id = TRACK.id
+        LEFT JOIN CURATOR ON PLYY.c_id = CURATOR.id
+        LEFT JOIN SONG ON PLYY.id = SONG.p_id
+        LEFT JOIN TRACK ON SONG.tk_id = TRACK.id
         WHERE PLYY.id = ?
         GROUP BY PLYY.id
     ''', (id, ))
@@ -245,6 +245,26 @@ def fetch_plyy_detail_3(id=int):
 
     return result
 
+# 플리상세 - 해당 플리 좋아요 갯수
+def fetch_plyy_detail_likes(id=int):
+    conn, cur = connect_db()
+    cur.execute('''
+        SELECT 
+            PLYY.id,
+            COUNT(P_LIKE.p_id) AS p_likes
+        FROM PLYY
+        LEFT JOIN P_LIKE ON PLYY.id = P_LIKE.p_id
+        WHERE PLYY.id = ?
+        GROUP BY PLYY.id
+    ''', (id, ))
+    raw_data = cur.fetchall()
+    result = []
+    for row in raw_data:
+        result.append(dict(row))
+    conn.close()
+
+    return result
+
 # 큐레이터상세 - 큐레이터 정보
 def fetch_curator_detail(c_id=int):
     conn, cur = connect_db()
@@ -267,5 +287,4 @@ def fetch_curator_detail(c_id=int):
     return data
 
 if __name__ == '__main__':
-    data = fetch_curator_detail(1)
-    pprint(data)
+    pass

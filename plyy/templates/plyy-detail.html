@@ -64,12 +64,19 @@
             <!-- 플리상세 플로팅 바 -->
             <div class="fixed-floating">
                 <div class="floating-plyy">
-                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기"></button></div>
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" onclick="floatingBack()"></button></div>
                     <div class="like-group">
                         <button class="btn__float__like" aria-label="플레이리스트 좋아요 수"></button>
-                        <span class="fs12">98</span>
+                        <span class="fs12" id="plyyLikes"></span>
                     </div>
-                    <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기"></button></div>
+                    <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기" onclick="copyToClipBoard()"></button></div>
+                </div>
+            </div>
+            <!-- 토스트메세지 -->
+            <div class="toast" id="toastMsg">
+                <div class="toast__msg">
+                    <div><button class="btn__checked"></button></div>
+                    <span class="fs12">링크가 복사 되었습니다.</span>
                 </div>
             </div>
         </div>
@@ -84,6 +91,7 @@
         // window.onload에서 미리 불러와야할 함수들 호출
         window.onload = function() {
             fetchPlyyDetail();
+            fetchPlyyDetailLikes();
         };
         
         // 플리 상세 fetch API
@@ -109,7 +117,7 @@
                     <div class="plyy-info align both pd8">
                         <div class="fs12">발행일 : ${data.plyy.gen_date}</div>
                         <div class="fs12">큐레이터 : ${data.plyy.c_name}</div>
-                        <div class="fs12">${data.plyy.total_songs}곡 | ${data.plyy.total_rtime}</div>
+                        <div class="fs12">${data.plyy.song_list.length}곡 | ${data.plyy.total_rtime}</div>
                     </div>
                 </div>
                 `;
@@ -147,6 +155,54 @@
                 });
             });
         };
+
+        // 플리 상세 - 플리 좋아요 갯수 fetch API
+        function fetchPlyyDetailLikes(){
+            // URL에서 플리 아이디 가져오기
+            let plyyPath = window.location.pathname;
+            let plyyPathList = plyyPath.split('/');
+            const plyyID = plyyPathList[plyyPathList.length - 1];
+
+            // 해당 플리 아이디로 플리 디테일 좋아요 갯수 API fetch
+            fetch(`/api_plyy_detail_likes/${plyyID}`)
+            .then(response => response.json())
+            .then(data => {
+                let plyyLikes = document.getElementById("plyyLikes");
+                let plyyLikesCount = data[0]['p_likes'];
+                // 좋아요 갯수가 null 일때(0개) 아무것도 보여주지 않기
+                if (plyyLikesCount == 0) {
+                    plyyLikes.innerText = null;
+                } else {
+                    plyyLikes.innerText = plyyLikesCount;
+                }
+            })
+        }
+        // 공유버튼 클릭시 클리보드 복사
+        function copyToClipBoard() {
+            // 복사할 URL 가져오기
+            let plyyDetailUrl = window.location.href;
+
+            // HTMLInputElement.select()를 사용하기 위한 더미인풋박스 생성
+            let dummyInput = document.createElement('input');
+            document.body.appendChild(dummyInput);
+            dummyInput.value = plyyDetailUrl;
+            dummyInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyInput);
+
+            // 토스트메세지 보이기
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.classList.add('active');
+            setTimeout(() => {
+                toastMsg.classList.remove('active');
+            }, 1500);
+
+        }
+        
+        // 플로팅 - 뒤로가기 버튼
+        function floatingBack() {
+            window.history.back();
+        }
     </script>
 </body>
 </html>

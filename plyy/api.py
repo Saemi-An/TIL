@@ -1,4 +1,4 @@
-from database2 import *
+from database import *
 from pprint import pprint
 import random
 import datetime
@@ -134,7 +134,13 @@ def plyy_detail(id=int):
     tags['tag_list'].append(tags['g_tag'])
     del tags['g_tag']
 
-    raw_plyy_detail = fetch_plyy_detail_1(id)
+    raw_plyy_detail_0 = fetch_plyy_detail_1(id)
+    # gen_data 날짜만 넣기
+    raw_plyy_detail = []
+    for row in raw_plyy_detail_0:
+        row['gen_date'] = row['gen_date'].split(' ')[0]
+        raw_plyy_detail.append(row)
+
     raw_plyy_detail[0]['tag_list'] = tags['tag_list']
 
     raw_songs = fetch_plyy_detail_3(id)
@@ -143,7 +149,7 @@ def plyy_detail(id=int):
     plyy_detail = {}
     for row in raw_plyy_detail:
         plyy_detail['plyy'] = row
-    
+
     return plyy_detail
 
 # 큐레이터상세 - 큐레이터 정보
@@ -193,5 +199,5 @@ def curator_detail_plyy_cards(c_id=int):
     return result_list
 
 if __name__ == '__main__':
-    pass
+    plyy_detail(11)
 
