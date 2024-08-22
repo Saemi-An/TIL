@@ -313,5 +313,5 @@ def fetch_song_detail(p_id):
     return data
 
 
-if __name__ == '__main__':
-    pass
+# if __name__ == '__main__':
+#     pass

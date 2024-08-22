@@ -87,5 +87,5 @@ def api_song_detail(p_id):
     return jsonify(song_detail_list)
 
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5050)
+# if __name__ == '__main__':
+#     app.run(debug=True, host='0.0.0.0', port=5050)
