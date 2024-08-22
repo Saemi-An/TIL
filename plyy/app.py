@@ -16,8 +16,13 @@ def plyy(id=int):
 
 @app.route('/curator/<id>')
 def curator(id):
-    # 플리 카드 목록 : 
+
     return render_template("curator-detail.html")
+
+@app.route('/song_detail/<p_id>+<num>')
+def song(p_id, num):
+
+    return render_template('song-detail2.html')
 
 # API - MAIN - 태그 검색
 @app.route('/api_main/search_by_tags')
@@ -69,6 +74,18 @@ def api_curator_detail_plyy_cards(c_id):
     
     return jsonify(c_detail_curator_cards)
 
+# API 곡 상세 - 플리 id, 곡 num 필요
+@app.route('/api_song_detail/<p_id>')
+def api_song_detail(p_id):
+    song_detail_list = song_detail(p_id)
+    
 
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.0', port=5050)
+    # SONG - num / vid / cmt / p_id
+    # TRACK - img / title / artist / album
+    # 총 곡수는 따로 구하기
+
+    return jsonify(song_detail_list)
+
+
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=5050)

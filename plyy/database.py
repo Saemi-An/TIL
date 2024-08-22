@@ -219,12 +219,13 @@ def fetch_plyy_detail_2(id=int):
 
     return result
 
-# 플리상세 태그 fetch : songs
+# 플리상세 fetch : songs
 def fetch_plyy_detail_3(id=int):
     conn, cur = connect_db()
     cur.execute('''
         SELECT 
             PLYY.id,
+            SONG.num,
             TRACK.img,
             TRACK.title,
             TRACK.artist,
@@ -286,5 +287,31 @@ def fetch_curator_detail(c_id=int):
 
     return data
 
-# if __name__ == '__main__':
-#     pass
+# 곡상세 - 전체 곡 목록 fetch
+def fetch_song_detail(p_id):
+    conn, cur = connect_db()
+    cur.execute('''
+        SELECT
+            SONG.num,
+            SONG.vid,
+            SONG.cmt,
+            SONG.p_id,
+            TRACK.title,
+            TRACK.artist,
+            TRACK.album,
+            TRACK.img
+        FROM SONG
+        LEFT JOIN TRACK ON SONG.tk_id = TRACK.id
+        WHERE SONG.p_id = ?
+    ''', (p_id, ))
+    raw_data = cur.fetchall()
+    data = []
+    for row in raw_data:
+        data.append(dict(row))
+    conn.close()
+
+    return data
+
+
+if __name__ == '__main__':
+    pass
