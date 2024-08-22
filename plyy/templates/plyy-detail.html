@@ -106,7 +106,6 @@
             fetch(`/api_plyy_detail/${plyyID}`)
             .then(response => response.json())
             .then(data => {
-
                 // 플리 상세 타이틀
                 const plyyTitle = document.getElementById('plyyTitle');
                 plyyTitle.innerHTML = `
@@ -142,7 +141,7 @@
                     const plyySongUl = document.getElementById("plyySongUl");
                     const newPlyySongLi = document.createElement('li');
                     newPlyySongLi.innerHTML = `
-                        <a href="" class="plyy__bottom__song-list__card">
+                        <a href="/song_detail/${data.plyy.id}+${songList.num}" class="plyy__bottom__song-list__card">
                             <div class="plyy__bottom__song-list__card__img"><img src="${songList.img}"></div>
                             <div class="plyy__bottom__song-list__card__info">
                                 <div class="fs14-bold">${songList.title}</div>
