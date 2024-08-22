@@ -26,12 +26,12 @@
             <!-- 곡 인덱스  -->
             <div class="song__index align both">
                 <div class="index badge tag">
-                    <span>1</span>
+                    <span id="currentSongIndex">1</span>
                     <span>&nbsp;/&nbsp;</span>
-                    <span>3</span>
+                    <span id="lastSongIndex"></span>
                 </div>
-                <button class="btn__arrow-left--white"></button>
-                <button class="btn__arrow-right"></button>
+                <button class="btn__arrow-left--white" id="preSong"></button>
+                <button class="btn__arrow-right" id="nextSong"></button>
             </div>
             <!-- 곡 상세 -->
             <div class="song" id="songInfo">
@@ -52,16 +52,23 @@
             </div>
             <div class="fixed-floating">
                 <div class="floating-song">
-                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기"></button></div>
-                    <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기"></button></div>
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" onclick="floatingBack()"></button></div>
+                    <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기" onclick="copyToClipBoard()"></button></div>
+                </div>
+            </div>
+            <!-- 토스트메세지 -->
+            <div class="toast" id="toastMsg">
+                <div class="toast__msg">
+                    <div><button class="btn__checked"></button></div>
+                    <span class="fs12">링크가 복사 되었습니다.</span>
                 </div>
             </div>
         </div>
     </main>
     <script>
-        let vidId; // 1. fetch 함수 밖에서 vidId 변수 선언
+        let vidId; // 1. 함수 외부에서 vidId 변수 선언
 
-        let apiReady = false; // YouTube API가 준비되었는지 여부를 추적하는 플래그
+        let apiReady = false; // 2. YouTube API가 준비되었는지 여부를 추적하는 플래그 설정
 
         window.onload = function() {
             fetchSongDetailList();
@@ -70,18 +77,57 @@
         // URL에서 plyy id & song num 가져오기
         let songPathList = window.location.pathname.split('/');
         let songUrlInfo = songPathList[songPathList.length - 1].split('+');
-        const plyyId = songUrlInfo[0];
-        const songNum = songUrlInfo[1];
+        const plyyId = songUrlInfo[0]; // str
+        const songNum = songUrlInfo[1]; // str
 
-        // 곡상세 - 전체 곡목록 fetch API
+        // 전체 곡목록 fetch API
         function fetchSongDetailList(){
             fetch(`/api_song_detail/${plyyId}`)
             .then(response => response.json())
             .then(data => {
+                // 이전곡 or 다음곡 버튼 클릭시
+                let intSongNum = Number(songNum);
+                let maxIndexNum = Number(data.length - 1); // 7
+                
+                const nextSong = document.getElementById('nextSong');
+                nextSong.addEventListener('click', () => {
+                    if(intSongNum === maxIndexNum){ // 현재 num == 마지막 곡
+                        let nextNum = 0;              
+                        let nextPath = `/song_detail/${plyyId}+${nextNum}`;
+                        window.location.href = nextPath;
+                    }else if(intSongNum !== maxIndexNum){ // 현재 num !== 마지막 곡
+                        let nextNum = intSongNum + 1;
+                        let nextPath = `/song_detail/${plyyId}+${nextNum}`;
+                        window.location.href = nextPath;
+                    }
+                });
+
+                const preSong = document.getElementById('preSong');
+                preSong.addEventListener('click', () => {
+                    if(intSongNum === 0){
+                        let preNum = maxIndexNum;
+                        let prePath = `/song_detail/${plyyId}+${preNum}`;
+                        window.location.href = prePath;
+                    }else if(intSongNum !== 0){
+                        let preNum = intSongNum - 1;
+                        let prePath = `/song_detail/${plyyId}+${preNum}`;
+                        window.location.href = prePath;
+                    }
+                });
+                
+                // 인덱싱 : 마지막
+                let totalSongs = data.length;
+                const lastSongIndex = document.getElementById('lastSongIndex');
+                lastSongIndex.innerText = totalSongs;
+
+                // songNum에 맞는 곡 정보 찾기
                 data.forEach(data => {
-                    // songNum에 맞는 곡 찾기
                     if(data.song.num == songNum){
-                        // 곡 상세 - 곡정보
+                        // 인덱싱 : 현재 페이지
+                        const currentSongIndex = document.getElementById('currentSongIndex');
+                        currentSongIndex.innerText = data.song.num + 1;
+
+                        // 곡정보 그리기
                         const songInfo = document.getElementById('songInfo');
                         songInfo.innerHTML = `
                             <div class="song__img"><img src="${data.song.img}"></div>
@@ -91,22 +137,20 @@
                                 <p class="fs16">${data.song.album}</p>
                             </div>
                         `;
-                        // 곡상세 - 코멘트 (코멘트 존재할 시에만 로딩)
+                        // 코멘트(가 있는 경우에만) 그리기
                         if(data.song.cmt){
                             const songCmt = document.getElementById('songCmt');
                             songCmt.classList.remove('hide');
                             songCmt.innerHTML = `<div class="pretendard">${data.song.cmt}</div>`;
-                        }else{};
+                        };
 
-                        // Youtube vidId
+                        // Youtube vidId 추출하기
                         let vidUrl = data.song.vid;
                         let vidUrlList = vidUrl.split('=');
-                        
-                        // 2. fetch 함수 안에서 vidId 변수가 값을 할당받음
-                        vidId = vidUrlList[vidUrlList.length - 1];
-                        // vidID = 'HGpyXfCqBCk';  
+                        vidId = vidUrlList[vidUrlList.length - 1]; // 3. 비동기 함수 안에서 vidId 변수의 값이 할당됨
 
                         // YouTube IFrame API가 로드된 후 초기화
+                        // 6. vidId를 설정한 후 apiReady가 true인 경우 initializeYouTubePlayer를 호출
                         if (apiReady) {
                             initializeYouTubePlayer();
                         }        
@@ -115,30 +159,30 @@
             })
         }
 
-        // YouTube IFrame API 로드
+        // 4. YouTube IFrame API 로드
         function loadYouTubeIframeAPI() {
-            // 2. This code loads the IFrame Player API code asynchronously.
+            // This code loads the IFrame Player API code asynchronously.
             var tag = document.createElement('script');
             tag.src = "https://www.youtube.com/iframe_api";
             var firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);   
         }
 
-        // YouTube IFrame API 준비 완료 콜백
+        // 5. YouTube IFrame API 준비 완료 콜백
         function onYouTubeIframeAPIReady() {
-            apiReady = true; // API가 준비되었음을 기록
-            if (vidId) {
-                initializeYouTubePlayer(); // vidId가 설정된 후 플레이어 초기화
+            apiReady = true; // API가 로드되면 apiReady를 true로 설정하고,
+
+            if (vidId) { // vidId가 이미 설정 되었다면
+                initializeYouTubePlayer(); // initializeYouTubePlayer를 호출하여 플레이어를 초기화
             }
         }
 
-        // YouTube 플레이어 초기화
+        // YouTube 플레이어 초기화. 7. 호출됨
         function initializeYouTubePlayer() {
             player = new YT.Player('player', {
                 videoId: vidId,
                 events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+                    'onReady': onPlayerReady
                 }
             });
         }
@@ -147,61 +191,35 @@
             event.target.playVideo();
         }
 
-        var done = false;
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-                done = true;
-            }
-        }
-
-        function stopVideo() {
-            player.stopVideo();
-        }
-
         // 페이지 로드 시 YouTube IFrame API 로드
         loadYouTubeIframeAPI();
 
+        // 플로팅 : 뒤로가기
+        function floatingBack(){
+            window.history.back();
+        }
 
-        function demo() {
-            // YOUTUBE
-            // 2. This code loads the IFrame Player API code asynchronously.
-            var tag = document.createElement('script');
-            tag.src = "https://www.youtube.com/iframe_api";
-            var firstScriptTag = document.getElementsByTagName('script')[0];
-            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);  
-    
-            // 3. This function creates an <iframe> (and YouTube player)
-            //    after the API code downloads.
-            var player;
-            function onYouTubeIframeAPIReady() {
-                player = new YT.Player('player', {
-                    videoId: `${vidId}`,
-                    // videoId: 'HGpyXfCqBCk',
-                    events: {
-                        'onReady': onPlayerReady,
-                        'onStateChange': onPlayerStateChange
-                    }
-                });
-            }
-            
-            // 4. The API will call this function when the video player is ready.
-            function onPlayerReady(event) {
-            event.target.playVideo();
-            }
-    
-            // 5. The API calls this function when the player's state changes.
-            //    The function indicates that when playing a video (state=1),
-            //    the player should play for six seconds and then stop.
-            var done = false;
-            function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-            //   setTimeout(stopVideo, 6000);
-                done = true;
-            }
-            }
-            function stopVideo() {
-            player.stopVideo();
-            }
+        // 플로팅 : 공유버튼 클릭시 클립보드 복사 --> 토스트 메세지
+        function copyToClipBoard(){
+            let songDetailUrl = window.location.href;
+
+            let dummyInput = document.createElement('input');
+            document.body.appendChild(dummyInput);
+            dummyInput.value = songDetailUrl;
+            dummyInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummyInput);
+
+            const toastMsg = document.getElementById('toastMsg');
+            toastMsg.classList.add('active');
+            setTimeout(() => {
+                toastMsg.classList.remove('active');
+            }, 1500);
+        }
+
+        function nextSong(p_id, next_num){
+            let nextPath = `/song_detail/${p_id}+${next_num}`;
+            window.location.href = nextPath;
         }
 
     </script>
