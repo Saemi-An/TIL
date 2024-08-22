@@ -198,6 +198,17 @@ def curator_detail_plyy_cards(c_id=int):
 
     return result_list
 
+# 곡상세 - 전체 곡 목록
+def song_detail(p_id):
+    song_detail_list = fetch_song_detail(p_id)
+
+    song_detail = []
+    for row in song_detail_list:
+        song_detail_dict = {}
+        song_detail_dict['song'] = row
+        song_detail.append(song_detail_dict)
+    
+    return song_detail
+
 if __name__ == '__main__':
     pass
-

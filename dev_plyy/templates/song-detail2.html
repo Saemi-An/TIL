@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLYY</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <style>
+        /* 추후에 JS로 song 파일에 넣을 수 있을까? */
+        .main__container {
+            background-image: url('../static/images/song-detail-background.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+    <main class="main">
+        <div class="main__container">
+            <!-- 유투브 비디오 -->
+            <div class="song__youtube">
+                <div id="youtube__area">
+                    <div id="player"></div>
+                </div>
+            </div>
+            <!-- 곡 인덱스  -->
+            <div class="song__index align both">
+                <div class="index badge tag">
+                    <span>1</span>
+                    <span>&nbsp;/&nbsp;</span>
+                    <span>3</span>
+                </div>
+                <button class="btn__arrow-left--white"></button>
+                <button class="btn__arrow-right"></button>
+            </div>
+            <!-- 곡 상세 -->
+            <div class="song" id="songInfo">
+                <!-- <div class="song__img"><img src="images/@album_img2.svg"></div>
+                <div class="song__info">
+                    <p class="h1">Attention</p>
+                    <p class="fs16">뉴진스</p>
+                    <p class="fs16">NewJeans 1st EP 'New Jeans'</p>
+                </div> -->
+            </div>
+            <!-- 곡에대한 큐레이터 코멘트 -->
+            <div class="song-cmt hide" id="songCmt">
+                <!-- <div class="pretendard">뉴잭스윙을 시도하는 그룹이나 아티스트는 많았지만, 한 시대를 풍미한 이 장르는 최근 10년간 한국 음악 씬에서 주목받지 못했습니다.
+                    그러나 케이팝의 최고 인기 그룹 뉴진스의 "Supernatural"로 인해 
+                    뉴잭스윙이 마침내 메인스트림에서 주목받게 되어 정말 기쁩니다. 
+                    이를 기념하기 위해 Murakami Takashi를 오마주한 아트워크와 함께 매년 여름마다 선보이는 믹셋을 업로드합니다.
+                    오래 기다리셨습니다. 즐겁게 들어 주시고 시원한 여름 되세요! ☀️😎</div> -->
+            </div>
+            <div class="fixed-floating">
+                <div class="floating-song">
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기"></button></div>
+                    <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기"></button></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        let vidId; // 1. fetch 함수 밖에서 vidId 변수 선언
+
+        let apiReady = false; // YouTube API가 준비되었는지 여부를 추적하는 플래그
+
+        window.onload = function() {
+            fetchSongDetailList();
+        };
+
+        // URL에서 plyy id & song num 가져오기
+        let songPathList = window.location.pathname.split('/');
+        let songUrlInfo = songPathList[songPathList.length - 1].split('+');
+        const plyyId = songUrlInfo[0];
+        const songNum = songUrlInfo[1];
+
+        // 곡상세 - 전체 곡목록 fetch API
+        function fetchSongDetailList(){
+            fetch(`/api_song_detail/${plyyId}`)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(data => {
+                    // songNum에 맞는 곡 찾기
+                    if(data.song.num == songNum){
+                        // 곡 상세 - 곡정보
+                        const songInfo = document.getElementById('songInfo');
+                        songInfo.innerHTML = `
+                            <div class="song__img"><img src="${data.song.img}"></div>
+                            <div class="song__info">
+                                <p class="h1">${data.song.title}</p>
+                                <p class="fs16">${data.song.artist}</p>
+                                <p class="fs16">${data.song.album}</p>
+                            </div>
+                        `;
+                        // 곡상세 - 코멘트 (코멘트 존재할 시에만 로딩)
+                        if(data.song.cmt){
+                            const songCmt = document.getElementById('songCmt');
+                            songCmt.classList.remove('hide');
+                            songCmt.innerHTML = `<div class="pretendard">${data.song.cmt}</div>`;
+                        }else{};
+
+                        // Youtube vidId
+                        let vidUrl = data.song.vid;
+                        let vidUrlList = vidUrl.split('=');
+                        
+                        // 2. fetch 함수 안에서 vidId 변수가 값을 할당받음
+                        vidId = vidUrlList[vidUrlList.length - 1];
+                        // vidID = 'HGpyXfCqBCk';  
+
+                        // YouTube IFrame API가 로드된 후 초기화
+                        if (apiReady) {
+                            initializeYouTubePlayer();
+                        }        
+                    };
+                });                
+            })
+        }
+
+        // YouTube IFrame API 로드
+        function loadYouTubeIframeAPI() {
+            // 2. This code loads the IFrame Player API code asynchronously.
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);   
+        }
+
+        // YouTube IFrame API 준비 완료 콜백
+        function onYouTubeIframeAPIReady() {
+            apiReady = true; // API가 준비되었음을 기록
+            if (vidId) {
+                initializeYouTubePlayer(); // vidId가 설정된 후 플레이어 초기화
+            }
+        }
+
+        // YouTube 플레이어 초기화
+        function initializeYouTubePlayer() {
+            player = new YT.Player('player', {
+                videoId: vidId,
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+        var done = false;
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+                done = true;
+            }
+        }
+
+        function stopVideo() {
+            player.stopVideo();
+        }
+
+        // 페이지 로드 시 YouTube IFrame API 로드
+        loadYouTubeIframeAPI();
+
+
+        function demo() {
+            // YOUTUBE
+            // 2. This code loads the IFrame Player API code asynchronously.
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);  
+    
+            // 3. This function creates an <iframe> (and YouTube player)
+            //    after the API code downloads.
+            var player;
+            function onYouTubeIframeAPIReady() {
+                player = new YT.Player('player', {
+                    videoId: `${vidId}`,
+                    // videoId: 'HGpyXfCqBCk',
+                    events: {
+                        'onReady': onPlayerReady,
+                        'onStateChange': onPlayerStateChange
+                    }
+                });
+            }
+            
+            // 4. The API will call this function when the video player is ready.
+            function onPlayerReady(event) {
+            event.target.playVideo();
+            }
+    
+            // 5. The API calls this function when the player's state changes.
+            //    The function indicates that when playing a video (state=1),
+            //    the player should play for six seconds and then stop.
+            var done = false;
+            function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+            //   setTimeout(stopVideo, 6000);
+                done = true;
+            }
+            }
+            function stopVideo() {
+            player.stopVideo();
+            }
+        }
+
+    </script>
+</body>
+</html>
