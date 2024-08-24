@@ -2,10 +2,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-    <meta content="yes" name="apple-mobile-web-app-capable" />  
-    <meta content="minimum-scale=1.0, width=device-width, maximum-scale=1, user-scalable=no" name="viewport" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PLYY</title>
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
@@ -13,12 +10,12 @@
     <!-- 헤더 -->
     <header class="header">
         <div class="align both">
-            <div><button class="btn-logo" aria-label="플리 로고"></button></div>
+            <div><button class="btn-logo" aria-label="플리 로고" id="plyyLogo"></button></div>
             <div class="header__icon-group">
                 <button class="btn-bell--default" aria-label="알림 없음"></button>
                 <!-- <button class="btn-bell--new" aria-label="새로운 알림 있음"></button> -->
                 <button class="btn-mylikes" aria-label="나의 좋아요"></button>
-                <button class="btn-myprofile2" aria-label="내 프로필"></button>
+                <button class="btn-myprofile2" aria-label="내 프로필" id="myProfile2"></button>
             </div>
         </div>
     </header>
@@ -209,8 +206,7 @@
             fetchSearchByTags();
             fetchPlyyCards();
         };
-
-
     </script>
+    <script src="../static/js/global.js"></script>
 </body>
 </html>

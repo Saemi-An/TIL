@@ -12,12 +12,12 @@
     <!-- 헤더 -->
     <header class="header">
         <div class="align both">
-            <div><button class="btn-logo" aria-label="플리 로고"></button></div>
+            <div><button class="btn-logo" aria-label="플리 로고" id="plyyLogo"></button></div>
             <div class="header__icon-group">
                 <button class="btn-bell--default" aria-label="알림 없음"></button>
                 <!-- <button class="btn-bell--new" aria-label="새로운 알림 있음"></button> -->
                 <button class="btn-mylikes" aria-label="나의 좋아요"></button>
-                <button class="btn-myprofile2" aria-label="내 프로필"></button>
+                <button class="btn-myprofile2" aria-label="내 프로필" id="myProfile2"></button>
             </div>
         </div>
     </header>
@@ -64,7 +64,7 @@
             <!-- 플리상세 플로팅 바 -->
             <div class="fixed-floating">
                 <div class="floating-plyy">
-                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" onclick="floatingBack()"></button></div>
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" id="historyBack"></button></div>
                     <div class="like-group">
                         <button class="btn__float__like" aria-label="플레이리스트 좋아요 수"></button>
                         <span class="fs12" id="plyyLikes"></span>
@@ -197,11 +197,7 @@
             }, 1500);
 
         }
-        
-        // 플로팅 - 뒤로가기 버튼
-        function floatingBack() {
-            window.history.back();
-        }
     </script>
+    <script src="../static/js/global.js"></script>
 </body>
 </html>

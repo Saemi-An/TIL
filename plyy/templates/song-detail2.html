@@ -52,7 +52,7 @@
             </div>
             <div class="fixed-floating">
                 <div class="floating-song">
-                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" onclick="floatingBack()"></button></div>
+                    <div><button class="btn__float__arrow__left" aria-label="뒤로가기" id="historyBack"></button></div>
                     <div><button class="btn__float__share--black" aria-label="플레이리스트 공유하기" onclick="copyToClipBoard()"></button></div>
                 </div>
             </div>
@@ -194,11 +194,6 @@
         // 페이지 로드 시 YouTube IFrame API 로드
         loadYouTubeIframeAPI();
 
-        // 플로팅 : 뒤로가기
-        function floatingBack(){
-            window.history.back();
-        }
-
         // 플로팅 : 공유버튼 클릭시 클립보드 복사 --> 토스트 메세지
         function copyToClipBoard(){
             let songDetailUrl = window.location.href;
@@ -222,6 +217,11 @@
             window.location.href = nextPath;
         }
 
+        // global.js 파일 왜 안먹지 ?
+        document.getElementById('historyBack').addEventListener('click', () => {
+            window.history.back();
+        })
     </script>
+    <script src="../static/js/global.js"></script>
 </body>
 </html>

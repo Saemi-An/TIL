@@ -24,6 +24,11 @@ def song(p_id, num):
 
     return render_template('song-detail2.html')
 
+@app.route('/login')
+def login():
+
+    return render_template('login.html')
+
 # API - MAIN - 태그 검색
 @app.route('/api_main/search_by_tags')
 def api_main_search_by_tags():
