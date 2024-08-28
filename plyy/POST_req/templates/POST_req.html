@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>From JS to Python: POST Request Example</title>
+</head>
+<body>
+    <h1>From JS to Python: POST Request Example</h1>
+    <button id="sendRequest">Send POST Request</button>
+
+    <script>
+        document.getElementById('sendRequest').addEventListener('click', () => {
+            const data = {
+                name: '안새미',
+                age: 28,
+                address: '서울',
+                car: 'G70'
+            };
+
+            // POST 요청 보내기
+            fetch('/post_endpoint', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            // 위에서 보낸 요청에 대한 응답 받기
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
