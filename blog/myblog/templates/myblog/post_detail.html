@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static "myblog/css/header.css" %}">
+  <link rel="stylesheet" href="{% static "myblog/css/post_detail.css" %}?after">
+{% endblock %}
+
+{% block content %}
+  {% include "myblog/includes/header.html" %}
+  <ul>
+    <li>{{ post_detail.post.title }}</li>
+    <li>{{ post_detail.post.registered_at }}</li>
+    <li><img src="{% get_static_prefix %}myblog/images/{{ post_detail.post.image }}"></li>
+    <li>{{ post_detail.post.content }}</li>
+  </ul>
+  
+  {% comment %}
+  <img src="{% static "myblog/images/post5.jpg" %}">   일반 방법
+  <img src="{% get_static_prefix %}myblog/images/{{post_detail.post.image}}">  static 태그 내에서 변수를 활용하는 방법
+  {% endcomment %}
+{% endblock %}

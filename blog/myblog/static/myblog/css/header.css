@@ -1,0 +1,12 @@
+nav {
+    margin: 1rem 2rem 1rem 2rem;
+    /* border: 1px solid blue; */
+}
+
+nav a {
+    text-decoration: none;
+    color: black;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-right: 1rem;
+}

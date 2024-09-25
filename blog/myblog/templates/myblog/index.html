@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static "myblog/css/header.css" %}">
+  <link rel="stylesheet" href="{% static "myblog/css/index.css" %}?after">
+{% endblock %}
+{% block js_files %}
+  <script src="{% static "myblog/js/index.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+  {% include "myblog/includes/header.html" %}
+  <div class="latest_post_container">
+    {% for post in latest_posts %}
+    <div class="post_container" onclick="goToPostDetail({{ post.post.post_num }})">
+      <img src="{% get_static_prefix %}myblog/images/{{ post.post.image }}">
+      <p>{{ post.post.title }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="welcome_textbox">
+    <p><strong>구움과자 상점에 방문해 주셔서 감사합니다 ^-^/</strong><p>
+    <p>주문 예약시 게시판 > [필독]을 확인해 주세요!</p>
+    <p>이외 영업시간 및 계절과일 변동사항 또한 게시판에 공지 됩니다.</p>
+  </div>
+  {% endblock %}
+
+  {% comment %} <li><img src="{% get_static_prefix %}myblog/images/{{ post_detail.post.image }}"></li> {% endcomment %}

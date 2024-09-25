@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static "myblog/css/header.css" %}">
+  <link rel="stylesheet" href="{% static "myblog/css/posts.css" %}?after">
+{% endblock %}
+{% block js_files %}
+  <script src="{% static "myblog/js/posts.js" %}"></script>
+{% endblock %}
+
+{% block content %}
+  {% include "myblog/includes/header.html" %}
+  <div class="page_title">
+    <h3>전체 게시물</h3>
+  </div>
+  {% if posts %}
+  <div class="table_container">
+    <table>
+      <thead>
+        <tr>
+          <th>No.</th>
+          <th>제목</th>
+          <th>등록일</th>
+        </tr>
+      </thead>
+      {% for post in posts %}
+      <tbody>
+        <tr class="table_row" onclick="goToPostDetail({{ post.post.post_num }})">
+          <td>{{post.post.num}}</td>
+          <td>{{post.post.title}}</td>
+          <td>{{post.post.registered_at}}</td>
+        </tr>
+      </tbody>
+      {% endfor %}
+    </table>
+  </div>
+  {% else %}
+    <p>게시물이 없습니다.</p>
+  {% endif %}
+{% endblock %}
