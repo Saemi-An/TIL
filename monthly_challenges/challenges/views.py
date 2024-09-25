@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
+from django.http import Http404, HttpResponseNotFound, HttpResponseRedirect
 from django.urls import reverse
+from django.template.loader import render_to_string
 
 monthly_challenges = {
     "january" : "Wake up early in the morning(10 a.m.) and then eat breakfase.",
     "feburary" : "Work out at least 30m, three days a week.",
     "march" : "Run a side project.",
-    "april" : "Get a job.",
+    "april" : None,
     "may" : "Start managing your finange. Track your money and start saving plan.",
     "jun" : "Wake up early in the morning(10 a.m.) and then eat breakfase.",
     "july" : "Plan a trip abroad with your company.",
@@ -18,17 +19,10 @@ monthly_challenges = {
 }
 
 def index(request):
-    list_items = ""
-    months = list(monthly_challenges.keys())
+    month_list = list(monthly_challenges.keys())
 
-    for month in months:
-        capitalized_month = month.capitalize()
-        month_path = reverse("url_name", args=[month])
-        list_items += f"<li><a href='{month_path}'>{capitalized_month}</a></li>"
-
-    response_data = f"<ul>{list_items}</ul>"
-
-    return HttpResponse(response_data)
+    # context는 json 형태로 넘겨줘야함 
+    return render(request, "challenges/index.html", {"month_list" : month_list})
 
 # month가 숫자로 들어왔을 때 --> 함수 내에서 확인 --> 문자 month url로 리다이렉트
 def monthly_challenge_by_number(request, month):
@@ -44,7 +38,10 @@ def monthly_challenge_by_number(request, month):
 def monthly_challenge(request, month):
     try:
         challenge_text = monthly_challenges[month]
-        response_data = f"<h1>{challenge_text}</h1>"
-        return HttpResponse(response_data)
+        # render(request, 템플렛위치/템플렛명, context(html파일에 넘겨줄 변수))
+        return render(request, "challenges/challenge.html", {
+                "month" : month,
+                "text" : challenge_text
+            })
     except:
-        return HttpResponseNotFound("<h1>요청하신 페이지를 찾을 수 없습니다.</h1>")
+        raise Http404()

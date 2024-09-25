@@ -1,0 +1,30 @@
+<!-- 
+앱 폴더(challenges) 
+    - templates 폴더
+        - [앱 이름] 폴더
+            - index.html
+             -->
+
+{% extends "base.html"%}
+{% load static %}
+
+{% block css_files %}
+  <link rel="stylesheet" href="{% static "challenges/header.css"%}">
+  <link rel="stylesheet" href="{% static "challenges/challenge.css"%}">
+{% endblock %}
+
+{% block page_title %}{{ month | capfirst }}{% endblock %}
+
+{% block content %}
+  
+  {% comment %} Partial HTML Snippet {% endcomment %}
+  {% comment %} include + "절대경로/include할 파일명" {% endcomment %}
+  {% include "challenges/includes/header.html" %}
+
+  <h1>{{ month | capfirst }}</h1>
+  {% if text != None %}
+      <h2>{{ text }}</h2>
+  {% else %}
+      <p class="fallback">이달의 목표를 지정해 주세요.</p>
+  {% endif %}
+{% endblock %}

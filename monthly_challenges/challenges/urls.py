@@ -5,7 +5,7 @@ from . import views
 
 
 urlpatterns = [
-    path("", views.index),
+    path("", views.index, name="index"),
     path("<int:month>", views.monthly_challenge_by_number),
     path("<str:month>", views.monthly_challenge, name="url_name"),   # url path에 이름을 부여함 
 ]
