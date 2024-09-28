@@ -1,0 +1,27 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block title %}{{ post.title }}{% endblock %}
+{% block css_files %}
+	<link rel="stylesheet" href="{% static "yourblog/post_detail.css" %}">
+{% endblock %}
+
+{% block content %}
+	<section id="summary">
+		<h2>{{ post.title }}</h2>
+    <article>
+      <img src="{% static "yourblog/images/"|add:post.image %}" alt="{{ post.title }}"> 
+      {% comment %} static 구문 안에 {{ }} 변수를 담을 수 없음 {% endcomment %}
+      <address>By {{ post.author }}</address>
+    </article>
+    <div>
+      Last updated on <time>{{ post.date|date:"Y.n.j" }}</time>
+    </div>
+	</section>
+
+  <main>
+    <p>
+      {{ post.content|linebreaks }}
+    </p>
+  </main>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base2.html" %}
+{% load static %}
+
+{% block title %}Your Blog{% endblock %}
+{% block css_files %}
+	<link rel="stylesheet" href="{% static "yourblog/includes/post.css" %}">
+	<link rel="stylesheet" href="{% static "yourblog/starting_page.css" %}">
+{% endblock %}
+
+{% block content %}
+	<section id="welcome">
+		<header>
+			<img src="{% static "yourblog/images/max.png" %}" alt="You - The Author of This Blog">
+			<h2>Your Blog<h2>
+		</header>
+		<p>Hi, there. You love to blog about tech and the world!</p>
+	</section>
+
+	<section id="latest-posts">
+		<h2>My Latests Thoughts</h2>
+		<ul>
+			{% for post in posts %}
+				{% include "yourblog/includes/post.html" %}
+			{% endfor %}
+		</ul>
+	</section>
+	
+	<section id="about">
+		<h2>What You Do</h2>
+		<p>You love programming, you love to help others and you enjoy exploring new technologies in general!</p>
+		<p>Your goal is to keep on growing as a developer and if you could help me do the same, you'd be very happy.</p>
+	</section>
+{% endblock %}

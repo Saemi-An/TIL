@@ -1,0 +1,20 @@
+{% extends "db_base.html" %}
+{% load static %}
+
+{% block title %}[DB]All Posts{% endblock %}
+{% block css_files %}
+<link rel="stylesheet" href="{% static "yourblog/includes/post.css" %}">
+<link rel="stylesheet" href="{% static "yourblog/all_posts.css" %}">
+{% endblock %}
+
+
+{% block content %}
+<section id="all-posts">
+    <h2>Your Collected Posts</h2>
+    <ul>
+        {% for post in posts %}
+            {% include "yourblog/includes/db_post.html" %}
+        {% endfor %}
+    </ul>
+</section>
+{% endblock %}

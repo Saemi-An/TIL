@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('myblog/', include("myblog.urls")),   # myblog 앱 생성 후 url 추가
+    path('', include("yourblog.urls")),   # yourblog앱이 가장 베이직한 url이 되도록 함 == # http://localhost:8000/
 ]

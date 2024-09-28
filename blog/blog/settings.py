@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'yourblog',   # yourblog 앱 생성 후 작성
     'myblog',   # myblog 앱 생성 후 작성
     'django.contrib.admin',
     'django.contrib.auth',
