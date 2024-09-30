@@ -9,8 +9,8 @@
 {% block content %}
 	<section id="summary">
     <div id="tag_container">
-      {% for tag in tag_list %}
-      <p>{{ tag }}</p>
+      {% for tag in post_tags %}
+      <p>{{ tag.tag }}</p>
       {% endfor %}
     </div>
 		<h2>{{ post.title }}</h2>
@@ -19,9 +19,9 @@
       {% comment %} static 구문 안에 {{ }} 변수를 담을 수 없음 {% endcomment %}
       <address>
       {% if author_email == "" %}
-        By {{ author_name }}
+        By {{ post.author }}
       {% else %}
-        By <a href="{% url "author_email" author_name author_email %}">{{ author_name }}</a>
+        By <a href="mailto:{{ post.author.email }}">{{ post.author }}</a>
       {% endif %}
       </address>
     </article>
