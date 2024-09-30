@@ -1,0 +1,13 @@
+{% extends "reviews/base.html" %}
+{% load custom_filters %}
+
+{% block title %}별점 상세{% endblock %}
+
+{% block content %}
+    <h3>{{ user_name }}님의 리뷰</h3>
+    <ul>
+    {% for review in detail %}
+        <li>{{ review.review_text }}({{ review.rating|star_ratings }})</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
