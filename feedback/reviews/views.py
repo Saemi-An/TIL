@@ -157,7 +157,15 @@ class ReviewDetailView(TemplateView):
         context["user_name"] = user_name
 
         return context
-        
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        loaded_review = self.object
+        request = self.request
+        favorite_id = request.session.get("favorite_review")
+        context["is_favorite"] = favorite_id == str(loaded_review.id)
+        return context
+    
 # [리뷰상세]2단계 : 리스트 뷰 --> ????
 # returning a template for a GET req for about A SINGLE PIECE OF DATA
 # class ReviewDetail2View(DetailVeiw):
@@ -165,5 +173,16 @@ class ReviewDetailView(TemplateView):
 #     model = Review
     # 소문자 테이블명(모델명)을 변수명으로 context에 자동으로 전달됨
 
+class AddFavoriteView(View):
+    def post(self, request):
+        review_id = request.POST["review_id"]
+        # fav_review = Review.objects.get(pk=review_id)   # not serializable, 세션에는 obejct가 아닌 primitive 데이터 형식만 저장 가능
+        request.session["favorite_review"] = review_id
+
+        # 리다이렉션용
+        fav_review_user_name = Review.objects.filter(pk=review_id)[0].user_name
+        return HttpResponseRedirect("/review-detail/" + fav_review_user_name)
+
+    
 
 

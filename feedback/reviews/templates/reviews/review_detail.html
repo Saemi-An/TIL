@@ -8,6 +8,11 @@
     <ul>
     {% for review in detail %}
         <li>{{ review.review_text }}({{ review.rating|star_ratings }})</li>
+        <form action="/review-list/favorite" method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="review_id" value="{{ review.id }}">
+            <button>좋아요</button>
+        </from>
     {% endfor %}
     </ul>
 {% endblock %}
