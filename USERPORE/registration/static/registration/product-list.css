@@ -1,0 +1,79 @@
+
+.product-list-container {
+    margin: 2rem;
+    padding: 0;
+    list-style: none;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    row-gap: 1rem;
+    column-gap: 1rem;
+}
+
+.product-card {
+    padding: 0.5rem 0.3rem 0.3rem 0.3rem;
+    display: grid;
+    grid-template-rows: 1.3rem 7rem 1.3rem  auto 1.3rem;
+    row-gap: 0.3rem;
+    align-items: center;
+    justify-items: center;
+    background-color: rgb(239, 229, 202);
+    border-radius: 12px;
+    border: 1px solid black;
+    box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);
+    box-sizing: border-box;
+}
+
+.product-card:focus {
+    background-color: palevioletred;
+}
+
+.tag {
+    background-color: rgb(33, 77, 47);
+    opacity: 0.8;
+    width: 80%;
+    border: 1px solid black;
+    border-radius: 8px;
+    padding: 2px 4px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+}
+
+.image {
+    background-size: cover;
+    width: 7rem;
+    height: 7rem;
+    border: 1px solid black;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.note {
+    font-size: 10px;
+    padding: 0 0.3rem;
+}
+
+.card-bottom {
+    padding: 0 0 0 2.7rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    box-sizing: border-box;
+}
+
+.card-bottom a {
+    display: flex;
+    align-self: center;
+}
+
+.price {
+    font-size: 12px;
+    font-weight: bold;
+}

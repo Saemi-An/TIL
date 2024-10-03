@@ -1,0 +1,66 @@
+
+from django.shortcuts import render, redirect
+
+from .forms import RegisterForm   # 폼클래스 불러오기
+from .models import Product
+        
+
+def product_list(request):
+    if request.method == "POST":
+        print("포스트 요청이 옴")
+        add_to_cart = request.POST.getlist("card_id")   # POST 요청에 담긴 card_id들이 담긴 리스트를 변수에 담음
+        print(f"카트에 담을 것: {add_to_cart}")
+        print(f"카트에 담을 것의 타입: {type(add_to_cart)}")
+        
+        
+        # 세션에 "cart_items" 키가 없을 경우(장바구니 최초 사용시): 빈 리스트를 할당하여 추후에 상품을 담을 공간을 마련
+        if 'cart_items' not in request.session or not isinstance(request.session['cart_items'], list):
+            request.session['cart_items'] = []
+
+        print(f"디버깅을 위한 출력: {type(request.session.get('cart'))}")  # 디버깅을 위한 출력 
+
+        request.session['cart_items'].extend(add_to_cart)  # (장바구니를 이미 사용한 경우를 상정하여, 새로운 상품을 추가하는 방식으로) 장바구니 세션에 상품 담기
+        request.session.modified = True  # 세션 수정 플래그 설정
+
+        return redirect("/registration")
+    
+    else:
+        print("겟 요청이 옴")
+        products = Product.objects.all()
+        return render(request, "registration/product-list.html", {
+            "products" : products,
+        })
+
+def cart(request):
+    cart = request.session.get('cart_items', [])   # (장바구니를 한번도 사용해보지 않은 유저가 장바구니부터 들어오는 경우를 대비하여) get()으로 장바구니 세션 목록을 변수에 담음
+    print(f"카트 내용: {cart}")
+
+    return render(request, "registration/cart.html")
+
+def register(request):
+    if request.method == "POST": 
+        submitted_data = RegisterForm(request.POST, request.FILES)   # POST 요청이 오면 폼을 전송된 데이터로 채운다 / 파일 데이터는 따로 적어준다
+        
+        if submitted_data.is_valid():   # 전송된 데이터의 유효성검사 결과가 True 일때, 등록 성공페이지로 redirect
+            # print(f"클린 데이터: {submitted_data.cleaned_data}")
+            product = Product(
+                pd_type=int(submitted_data.cleaned_data["pd_type"]),
+                pd_name=submitted_data.cleaned_data["pd_name"],
+                pd_note=submitted_data.cleaned_data["pd_note"],
+                pd_price=int(submitted_data.cleaned_data["pd_price"]),
+                pd_img = submitted_data.cleaned_data["pd_img"]   # 이거 여기 합쳐도 되나??
+                )
+            product.save()
+            # pd_img = Product(pd_img=request.FILES["pd_img"])   # 인풋필드 "pd_img"에서 전송된 파일을 Product 모델(테이블)의 "pd_img" 컬럼 아래에 저장함
+            # pd_img.save()
+            return redirect("/registration/register-completed")
+    else:
+        submitted_data = RegisterForm()   # POST 요청이 아닐때, 빈 폼을 보내준다
+
+    return render(request, "registration/register.html", {   # POST 요청이 왔으나 유효성 검사 결과가 False일때, 전송된 데이터로 채워진 폼을 보내준다 --> 에러 메세지가 보이게됨
+        "forms" : submitted_data,
+    })
+
+def register_completed(request):
+
+    return render(request, "registration/register-completed.html")

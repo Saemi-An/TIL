@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}상품 등록{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "registration/register.css" %}?after">
+{% endblock %}
+
+{% block content %}
+    <form class="form-container" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% for form in forms %}
+        <div class="each-form-container {% if form.errors %}invalid{% endif %}">
+            {{ form.label_tag }}
+            {{ form }}
+            {{ form.errors }}
+        </div>
+        {% endfor %}
+        <div class="button-container">
+            <button>등록하기</button>
+        </div>
+    </form>
+    
+    <div>
+        {% comment %}
+            <label for="id_pd_type">Pd type:</label>
+            <ul class="errorlist">
+                <li>Ensure this value is less than or equal to 4.</li>
+            </ul>
+            <input type="number" name="pd_type" value="234" required aria-invalid="true" id="id_pd_type">
+        {% endcomment %}
+    </div>
+{% endblock %}

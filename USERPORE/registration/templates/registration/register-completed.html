@@ -1,0 +1,21 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register-Completed</title>
+    <link rel="stylesheet" href="{% static "registration/register-completed.css" %}">
+</head>
+<body>
+    <h3>상품이 정상적으로 등록 되었습니다:)</h3>
+    <button onclick="goBack()">등록 페이지로 돌아가기</button>
+    
+    <script>
+        function goBack() {
+            window.location.href = "/registration/register/"
+        }
+    </script>
+</body>
+</html>

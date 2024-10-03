@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block title %}상품 메뉴{% endblock %}
+{% block css_files %}
+    <link rel="stylesheet" href="{% static "registration/product-list.css" %}">
+{% endblock %}
+
+{% block content %}
+<ul class="product-list-container">
+    {% for product in products %}
+        <div class="product-card">
+            <li class="tag">{{ product.pd_type | product_type}}</li>
+            {% comment %} <li><img src="{{product.pd_img.url}}"></li> {% endcomment %}
+            <div style="background-image: url({{product.pd_img.url}})" class="image"></div>
+            <li class="title">{{ product.pd_name }}</li>
+            <li class="note">{{ product.pd_note }}</li>
+            <div class="card-bottom">
+                <li class="price">{{ product.pd_price }}원</li>
+                <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="card_id" value="{{ product.id }}">
+                    {% comment %} <a><img src="../../static/registration/plus.svg" alt=""></a> {% endcomment %}
+                    <input type="image" src="../../static/registration/plus.svg">
+                </form>
+            </div>
+        </div>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,74 @@
+/* 폼 전체 */
+form {
+    margin: 3rem auto;
+    padding: 1rem;
+    width: 90%;
+    max-width: 30rem;
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+}
+
+/* 개별 인풋 필드 */
+.each-form-container {
+    margin-bottom: 1rem;
+}
+.each-form-container label {
+    font-weight: bold;
+    display: block;
+    margin: 0.5rem;
+}
+.each-form-container input, select, textarea {
+    display: block;
+    width: 20rem;
+    padding: 0.25rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+textarea {
+    height: 5rem;
+}
+.each-form-container input:focus, select:focus, textarea:focus {
+    background-color: #f4eeff;
+    border-color: #1f0050;
+    outline: none;   /* 포커싱 되었을 때, 못생긴 파란색 디폴트 아웃라인을 없애고 지정 css를 보이게 해줌 */
+}
+
+/* 개별 인풋 필드: 에러 */
+.errorlist {
+    list-style: none;
+    margin: 0.25rem 0;
+    padding: 0;
+    color: #7f0101;
+    font-size: 0.75rem;
+}
+
+.invalid label {
+    color: #7f0101;
+}
+
+.invalid input, .invalid textarea {
+    border-color: #7f0101;
+    background-color: #fde3e3;
+}
+
+
+/* 버튼 */
+.button-container {
+    margin: 2rem auto 0.5rem auto;
+    display: flex;
+    justify-content: right;
+}
+button {
+    cursor: pointer;
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+    background-color: #1f0050;
+    color: white;
+    border: 1px solid #1f0050;
+}
+button:hover,
+button:active {
+    background-color: #320777;
+    border-color: #320777;
+}
