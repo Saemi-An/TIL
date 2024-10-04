@@ -1,7 +1,8 @@
 
 from django.shortcuts import render, redirect
 from django.db.models import Sum
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.views.decorators.http import require_POST
 
 from .forms import RegisterForm   # 폼클래스 불러오기
 from .models import Product
@@ -16,15 +17,10 @@ def product_list(request):
     if request.method == "POST":
         print("포스트 요청이 옴")
         add_to_cart = request.POST.getlist("card_id")   # POST 요청에 담긴 card_id들이 담긴 리스트를 변수에 담음
-        print(f"카트에 담을 것: {add_to_cart}")
-        print(f"카트에 담을 것의 타입: {type(add_to_cart)}")
-        
         
         # 세션에 "cart_items" 키가 없을 경우(장바구니 최초 사용시): 빈 리스트를 할당하여 추후에 상품을 담을 공간을 마련
         if 'cart_items' not in request.session or not isinstance(request.session['cart_items'], list):
             request.session['cart_items'] = []
-
-        print(f"디버깅을 위한 출력: {type(request.session.get('cart'))}")  # 디버깅을 위한 출력 
 
         request.session['cart_items'].extend(add_to_cart)  # (장바구니를 이미 사용한 경우를 상정하여, 새로운 상품을 추가하는 방식으로) 장바구니 세션에 상품 담기
         request.session.modified = True  # 세션 수정 플래그 설정
@@ -75,10 +71,62 @@ def cart(request):
         "total_quantity" : total_quantity,
     })
 
-def delete_cart_item(request, item_id):
-    item_id = item_id
+def delete_cart_item(request):
+    if request.method == "POST":
+        print("카트에서 포스트 요청옴")
+        item_id = request.POST["cart_item_id"]
+        print(f"지워야할 상품 아이디: {item_id}")
 
-    return HttpResponse(f"Hello, World! {item_id}")
+        cart_items = request.session.get("cart_items", [])
+        print(f"현재 카트: {cart_items}")   # ['6', '1', '4', '5', '1']
+        while item_id in cart_items:
+            cart_items.remove(item_id)
+        print(f"지우고 난 뒤의 카트: {cart_items}")
+
+        request.session["cart_items"] = cart_items
+        request.session.modified = True  # 세션 수정 플래그 설정
+
+        changed_cart_itmes = request.session.get("cart_items", [])
+        print(f"세션이 잘 변경 & 저장 되었나 확인!! {changed_cart_itmes}")
+
+        return HttpResponseRedirect("/registration/cart")
+    
+def increase_quantity(request):
+    if request.method == "POST":
+        print("수량 + 포스트 요청옴")
+        increase_item_id = list(request.POST["increase_item"])
+        print(f"수량 +할 상품 아이디를 리스트에 담음: {increase_item_id}")
+
+        cart_items = request.session.get("cart_items", [])
+        print(f"현재 카트: {cart_items}")
+
+        request.session['cart_items'].extend(increase_item_id)  # (장바구니를 이미 사용한 경우를 상정하여, 새로운 상품을 추가하는 방식으로) 장바구니 세션에 상품 담기
+        request.session.modified = True  # 세션 수정 플래그 설정
+
+        return HttpResponseRedirect("/registration/cart")
+
+def decrease_quantity(request):
+    if request.method == "POST":
+        print("수량- 포스트 요청옴")
+        decrease_item_id = request.POST["decrease_item"]
+        print(f"수량- 상품 아이디: {decrease_item_id}")
+
+        cart_items = request.session.get("cart_items", [])
+        print(f"현재 카트: {cart_items}")
+
+        while decrease_item_id in cart_items:
+            cart_items.remove(decrease_item_id)
+            break
+        print(f"지우고 난 뒤의 카트: {cart_items}")
+
+        request.session["cart_items"] = cart_items
+        request.session.modified = True  # 세션 수정 플래그 설정
+
+        changed_cart_itmes = request.session.get("cart_items", [])
+        print(f"세션이 잘 변경 & 저장 되었나 확인!! {changed_cart_itmes}")
+
+        return HttpResponseRedirect("/registration/cart")
+
 
 def register(request):
     if request.method == "POST": 

@@ -19,14 +19,26 @@
                 <div class="cart-item__info">
                     <div class="cart-item__info__top">
                         <p>{{ item.pd_name }}</p>
-                        <a href="{% url "delete_cart_item" item.id %}" style="background-image: url({% static 'registration/cart_x.svg' %})" class="icon_x"></a>
+                        <form action="cart/delete_cart_item" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="cart_item_id" value="{{ item.id }}">
+                            <button style="background-image: url({% static 'registration/cart_x.svg' %})" class="icon_x"></button>
+                        </form>
                     </div>
                     <div class="cart-item__info__bottom">
-                        <div class="cart-item__info__bottom__quantity">
-                            <div style="background-image: url({% static 'registration/cart_minus.svg' %})" class="icon_minus"></div>
+                        <div class="cart-item__info__bottom__quantity" data-item-id="{{ item.id }}">
+                            <form action="{% url "decrease_quantity" %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="decrease_item" value="{{ item.id }}">
+                                <button style="background-image: url({% static 'registration/cart_minus.svg' %})" class="icon_minus"></button>
+                            </form>
                             <span class="quantity">{{ item.quantity }}</span>
-                            <div style="background-image: url({% static 'registration/cart_plus.svg' %}" class="icon_plus"></div>
-                        </div>
+                            <form action="{% url "increase_quantity" %}" method="POST">
+                                {% csrf_token %}
+                                <input type="hidden" name="increase_item" value="{{ item.id }}">
+                                <button style="background-image: url({% static 'registration/cart_plus.svg' %}" class="icon_plus"></button>
+                            </div>
+                        </form>
                         <p class="cart-item__info__bottom__price">{{ item.pd_price|mul:item.quantity|intcomma}}원</p>
                     </div>
                 </div>

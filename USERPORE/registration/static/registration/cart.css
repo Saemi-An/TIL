@@ -77,6 +77,15 @@ li:last-child {
 .icon_x {
     width: 1.5rem;
     height: 1.5rem;
+    
+    /* 버튼 리셋 */
+    background: inherit; 
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding:0;
+    overflow: visible;
+    cursor: pointer;
 }
 .cart-item__info__bottom {
     height: 2rem;
@@ -91,6 +100,15 @@ li:last-child {
 .icon_minus {
     width: 1.5rem;
     height: 1.5rem;
+
+    /* 버튼 리셋 */
+    background: inherit; 
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding:0;
+    overflow: visible;
+    cursor: pointer;
 }
 .quantity {
     margin: 0;
@@ -104,6 +122,15 @@ li:last-child {
 .icon_plus {
     width: 1.5rem;
     height: 1.5rem;
+    
+    /* 버튼 리셋 */
+    background: inherit; 
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding:0;
+    overflow: visible;
+    cursor: pointer;
 }
 .cart-item__info__bottom__price {
     margin: 0;
