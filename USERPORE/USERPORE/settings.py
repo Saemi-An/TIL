@@ -31,6 +31,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.humanize',
+    'mathfilters',
     'registration',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -132,4 +134,6 @@ MEDIA_ROOT = BASE_DIR / "uploads"   # 업로드된 파일이 어디에 저장되
 
 MEDIA_URL = "/user-media/"   # DB에 저장된 이미지를 보여줄 때, 접근 url 이름을 정의
 
-# SESSION_COOKIE_AGE = # 디폴트는 2주 / 120 = 세션이 2분동안 지속됨
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True   # 브라우저 닫으면 세션 삭제
+
+SESSION_COOKIE_AGE = 43200   # 세션 쿠키는 12시간만 유지됨

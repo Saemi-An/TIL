@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
-{% load custom_filters %}
+{% load humanize %}
+{% load mathfilters %} 
 
 {% block title %}장바구니{% endblock %}
 
@@ -9,7 +10,48 @@
 {% endblock %}
 
 {% block content %}
-    <h2>장바구니</h2>
+    {% if items %}
+        <div class="ul-container">
+        <ul class="cart-item-container">
+            {% for item in items %}
+            <li class="cart-item">
+                <div style="background-image: url('/user-media/{{ item.pd_img }}')" class="pd_img"></div>
+                <div class="cart-item__info">
+                    <div class="cart-item__info__top">
+                        <p>{{ item.pd_name }}</p>
+                        <a href="{% url "delete_cart_item" item.id %}" style="background-image: url({% static 'registration/cart_x.svg' %})" class="icon_x"></a>
+                    </div>
+                    <div class="cart-item__info__bottom">
+                        <div class="cart-item__info__bottom__quantity">
+                            <div style="background-image: url({% static 'registration/cart_minus.svg' %})" class="icon_minus"></div>
+                            <span class="quantity">{{ item.quantity }}</span>
+                            <div style="background-image: url({% static 'registration/cart_plus.svg' %}" class="icon_plus"></div>
+                        </div>
+                        <p class="cart-item__info__bottom__price">{{ item.pd_price|mul:item.quantity|intcomma}}원</p>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+        </div>
+        <div class="cart-total">
+            <div class="cart-total__quantity">
+                <span style="font-weight: bold;">총 수량</span>
+                <span>{{ total_quantity }}개</span>
+            </div>
+            <div class="cart-total__price">
+                <span style="font-weight: bold;">총 금액</span>
+                <span>{{ total_price|intcomma }}원</span>
+            </div>
+        </div>
+        <div class="order-btn">
+            <p>예약 주문서 작성하기</p>
+        </div>
+    {% else %}
+        <div class="empty">
+            <p>장바구니에 담긴 상품이 없습니다 :(</p>
+        </div>
+    {% endif %}
 {% endblock %}
 
 
